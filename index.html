@@ -170,7 +170,7 @@
   <input type="file" accept="image/*" capture="environment" id="cameraInput" style="display:none" onchange="handlePhotoCapture(event)">
   <button id="addBtn" onclick="openAddModal()">+</button>
 
-  <div id="modal">
+  <div id="modal" onclick="if(event.target===this) closeModal()">
     <div class="box">
       <h3 id="modalTitle">Add Book</h3>
       <div class="modalSub" id="modalSub"></div>
