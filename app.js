@@ -1,6 +1,6 @@
 // ====== CONFIGURE THESE TWO VALUES ======
 // The URL of your deployed Apps Script web app (ending in /exec).
-const API_URL = 'https://script.google.com/macros/s/AKfycbxB3yCH-chu4GbjI0siZgiC5lgP9n3te2cDPRD474wcgk9zGBnINJFy70427h9VDC71/exec';
+const API_URL = 'PASTE_YOUR_APPS_SCRIPT_WEB_APP_URL_HERE';
 // Must exactly match API_KEY in Code.gs.
 const API_KEY = 'alice-lib-8f2q4z-reading-2026';
 // =========================================
@@ -98,7 +98,7 @@ function render() {
     const rating = myRating(b);
     const read = isRead(b);
     const cover = b.CoverURL
-      ? '<img src="' + esc(b.CoverURL) + '" alt="" loading="lazy" onerror="this.parentElement.innerHTML=\\'<div class=&quot;placeholder&quot;>📖</div>\\'">'
+      ? '<img src="' + esc(b.CoverURL) + '" alt="" loading="lazy" onerror="this.parentElement.innerHTML=\'<div class=&quot;placeholder&quot;>📖</div>\'">'
       : '<div class="placeholder">📖</div>';
     return '<div class="card" onclick="editBook(' + b.rowIndex + ')">' +
       '<div class="pillRow topRow">' +
