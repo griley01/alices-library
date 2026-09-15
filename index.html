@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Alice's Library</title>
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" href="icon-192.png">
+  <link rel="apple-touch-icon" href="apple-touch-icon.png">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="theme-color" content="#922f5c">
+  <style>
+    :root {
+      --deep: #922f5c;
+      --deep-dark: #5e1d3c;
+      --rose: #d6567f;
+      --blush: #f9e6ec;
+      --page: #ffffff;
+      --ink: #3a2430;
+      --ink-soft: #8a6b76;
+      --card: #ffffff;
+      --border: #f1dbe3;
+      --gold: #e8a24a;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Helvetica Neue', Arial, sans-serif; background: var(--page); color: var(--ink);
+           min-height: 100vh; padding-bottom: 90px; -webkit-font-smoothing: antialiased; }
+
+    .header { background: #d470a2; padding: calc(2rem + env(safe-area-inset-top)) 1.25rem 1.75rem; color: #fff; position: relative; overflow: hidden; }
+    .header-inner { max-width: 900px; margin: 0 auto; }
+    .eyebrow { font-size: 11px; letter-spacing: 0.14em; color: #f3c3d6; text-transform: uppercase; margin-bottom: 0.5rem; font-weight: 600; }
+    h1 { font-family: Georgia, serif; font-size: clamp(24px, 6vw, 32px); font-weight: 400; }
+    .refresh-note { font-size: 12px; color: rgba(255,255,255,0.75); margin-top: 6px; }
+    .live-dot { display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: #5dcaa5; margin-right: 6px; }
+    .header-shelf { max-width: 900px; margin: 18px auto 0; }
+    .header-shelf svg { display: block; width: 100%; height: 62px; }
+
+    .kpi-row { max-width: 900px; margin: -1.25rem auto 0; padding: 0 1.25rem; position: relative; z-index: 2;
+               display: grid; grid-template-columns: repeat(auto-fit, minmax(110px, 1fr)); gap: 8px; }
+    .kpi { background: #e7accf; border: 1px solid var(--border); border-radius: 10px; padding: 0.85rem 0.9rem;
+           box-shadow: 0 6px 18px rgba(146,47,92,0.08); }
+    .kpi-label { font-size: 10.5px; color: var(--ink-soft); text-transform: uppercase; letter-spacing: 0.06em; }
+    .kpi-value { font-family: Georgia, serif; font-size: 22px; margin-top: 3px; }
+
+    .content { max-width: 900px; margin: 0 auto; padding: 1.5rem 1.25rem 2rem; }
+
+    .filter-bar { background: #e7accf; border: 1px solid var(--border); border-radius: 10px; padding: 0.85rem 0.9rem;
+                  display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 1rem; align-items: center; }
+    .filter-bar input, .filter-bar select { font-size: 13.5px; padding: 8px 10px; border-radius: 6px;
+                  border: 1px solid var(--border); background: #fffbfc; color: var(--ink); font-family: inherit; }
+    .filter-bar input[type="text"] { flex: 1; min-width: 160px; }
+    .filter-bar select { max-width: 100%; }
+    .filter-bar input:focus, .filter-bar select:focus { outline: none; border-color: var(--rose); }
+
+    .count-line { font-size: 12.5px; color: var(--ink-soft); margin-bottom: 1rem; }
+
+    .grid { display: grid; grid-template-columns: 1fr; gap: 10px; }
+    @media (min-width: 620px) { .grid { grid-template-columns: 1fr 1fr; } }
+    .card { background: #FFD8F0; border: 1px solid var(--border); border-radius: 10px; padding: 0.85rem 0.95rem;
+            cursor: pointer; transition: box-shadow 0.15s, transform 0.15s; }
+    .card:active { box-shadow: 0 6px 18px rgba(146,47,92,0.1); transform: scale(0.99); }
+
+    .pillRow { display: flex; align-items: center; gap: 5px; flex-wrap: wrap; margin-bottom: 4px; }
+    .pillRow.topRow { margin-left: 62px; }
+    .stars { color: var(--gold); font-size: 13px; letter-spacing: 1px; }
+    .stars .empty { color: var(--border); }
+    .pillRow .rightAlign { margin-left: auto; }
+    .pill { display: inline-block; font-size: 10.5px; padding: 2px 9px; border-radius: 20px;
+            background: var(--blush); color: var(--deep); white-space: nowrap; }
+    .pill.loaned { background: #fdeeda; color: #a15b12; }
+    .pill.read { background: #e3f2ea; color: #2f7a53; }
+    .pill.unread { background: #f2eeee; color: #9a8c8c; }
+
+    .cardMain { display: flex; gap: 10px; align-items: flex-start; }
+    .cardCover { flex-shrink: 0; width: 52px; height: 78px; border-radius: 5px; overflow: hidden;
+                 box-shadow: 0 2px 6px rgba(0,0,0,0.18); background: var(--blush); }
+    .cardCover img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .cardCover .placeholder { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center;
+                 font-size: 20px; color: var(--rose); background: var(--blush); }
+    .cardBody { flex: 1; min-width: 0; }
+    .card h3 { font-family: Georgia, serif; font-size: 16px; font-weight: 400; margin-bottom: 2px; color: var(--ink); }
+    .card .meta { font-size: 12px; color: var(--ink-soft); margin-bottom: 6px; }
+    .card .desc { font-size: 12.5px; color: var(--ink-soft); line-height: 1.4; margin-top: 6px;
+                  display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+
+    #empty { text-align: center; color: var(--ink-soft); padding: 3rem 1rem; }
+    #loading { text-align: center; color: var(--ink-soft); padding: 3rem 1rem; }
+
+    #addBtn { position: fixed; bottom: calc(22px + env(safe-area-inset-bottom)); right: 22px; width: 56px; height: 56px;
+              border-radius: 50%; background: var(--deep); color: #fff; font-size: 1.8em; border: none;
+              box-shadow: 0 4px 14px rgba(94,29,60,0.4); cursor: pointer; line-height: 1; z-index: 5; }
+    #cameraBtn { position: fixed; bottom: calc(90px + env(safe-area-inset-bottom)); right: 22px; width: 48px; height: 48px;
+              border-radius: 50%; background: #fff; color: var(--deep); font-size: 1.3em; border: 1px solid var(--border);
+              box-shadow: 0 4px 14px rgba(94,29,60,0.25); cursor: pointer; line-height: 1; z-index: 5; }
+
+    #modal { display: none; position: fixed; inset: 0; background: rgba(58,36,48,0.55);
+             align-items: center; justify-content: center; padding: 16px; z-index: 10; }
+    #modal .box { background: var(--card); border-radius: 12px; padding: 22px; width: 100%; max-width: 460px;
+                  max-height: 85vh; overflow-y: auto; }
+    #modal h3 { font-family: Georgia, serif; font-size: 19px; font-weight: 400; color: var(--deep); margin-bottom: 2px; }
+    .modalSub { font-size: 12px; color: var(--ink-soft); margin-bottom: 4px; }
+    #modal .field label { display: block; font-size: 11.5px; color: var(--ink-soft); text-transform: uppercase;
+                   letter-spacing: 0.05em; margin-top: 12px; margin-bottom: 4px; }
+    #modal .field input, #modal .field textarea { width: 100%; padding: 9px 10px; border: 1px solid var(--border);
+                   border-radius: 6px; font-size: 14px; font-family: inherit; background: #fffbfc; color: var(--ink); }
+    #modal .field input:focus, #modal .field textarea:focus { outline: none; border-color: var(--rose); }
+    #modal .field textarea { min-height: 60px; resize: vertical; }
+
+    .sectionDivider { margin-top: 18px; padding-top: 12px; border-top: 1px solid var(--border);
+                       font-size: 11px; color: var(--rose); text-transform: uppercase; letter-spacing: 0.08em; }
+    .starPicker { font-size: 24px; letter-spacing: 4px; margin-top: 6px; }
+    .starPicker .star { cursor: pointer; color: var(--border); }
+    .starPicker .star.filled { color: var(--gold); }
+
+    .toggleRow { display: flex; align-items: center; gap: 10px; margin-top: 16px; }
+    .switch { position: relative; display: inline-block; width: 42px; height: 24px; flex-shrink: 0; }
+    .switch input { opacity: 0; width: 0; height: 0; }
+    .switchTrack { position: absolute; inset: 0; background: #e8d5db; transition: 0.2s; border-radius: 24px; cursor: pointer; }
+    .switchTrack:before { position: absolute; content: ""; height: 18px; width: 18px; left: 3px; top: 3px;
+                           background: #fff; transition: 0.2s; border-radius: 50%; box-shadow: 0 1px 2px rgba(0,0,0,0.2); }
+    .switch input:checked + .switchTrack { background: var(--rose); }
+    .switch input:checked + .switchTrack:before { transform: translateX(18px); }
+    .toggleText { font-size: 13.5px; color: var(--ink); }
+
+    .modalActions { margin-top: 18px; text-align: right; }
+    .modalActions button { padding: 9px 18px; border-radius: 6px; border: none; margin-left: 8px;
+                            cursor: pointer; font-size: 14px; font-family: inherit; }
+    #saveBtn { background: var(--deep); color: #fff; }
+    #saveBtn:disabled { opacity: 0.6; cursor: default; }
+    #cancelBtn { background: var(--blush); color: var(--deep); }
+    #deleteBtn { background: none; color: #b3455e; border: 1px solid #f1c4d0; margin-right: auto; float: left; }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <div class="header-inner">
+      <div class="eyebrow">Personal catalog</div>
+      <h1>Alice's Library</h1>
+      <div class="refresh-note"><span class="live-dot"></span>Synced live with your Google Sheet</div>
+    </div>
+    <div class="header-shelf" id="headerShelf"></div>
+  </div>
+
+  <div class="kpi-row">
+    <div class="kpi"><div class="kpi-label">Books</div><div class="kpi-value" id="kpiBooks">–</div></div>
+    <div class="kpi"><div class="kpi-label">Genres</div><div class="kpi-value" id="kpiGenres">–</div></div>
+    <div class="kpi"><div class="kpi-label">Avg Rating</div><div class="kpi-value" id="kpiRating">–</div></div>
+    <div class="kpi"><div class="kpi-label">Loaned Out</div><div class="kpi-value" id="kpiLoaned">–</div></div>
+    <div class="kpi"><div class="kpi-label">Read</div><div class="kpi-value" id="kpiRead">–</div></div>
+  </div>
+
+  <div class="content">
+    <div class="filter-bar">
+      <input type="text" id="search" placeholder="Search title, author, genre…">
+      <select id="genreFilter"><option value="">All genres</option></select>
+      <select id="sortBy">
+        <option value="title">Sort: Title A–Z</option>
+        <option value="author">Sort: Author A–Z</option>
+        <option value="rating">Sort: Rating (high–low)</option>
+        <option value="year">Sort: Year (new–old)</option>
+      </select>
+    </div>
+    <div class="count-line" id="count">Loading…</div>
+    <div class="grid" id="list"></div>
+    <div id="empty" style="display:none;">No books match that search.</div>
+  </div>
+
+  <button id="cameraBtn" onclick="openCameraCapture()" title="Add from photo">📷</button>
+  <input type="file" accept="image/*" capture="environment" id="cameraInput" style="display:none" onchange="handlePhotoCapture(event)">
+  <button id="addBtn" onclick="openAddModal()">+</button>
+
+  <div id="modal">
+    <div class="box">
+      <h3 id="modalTitle">Add Book</h3>
+      <div class="modalSub" id="modalSub"></div>
+      <input type="hidden" id="f_rowIndex">
+      <div id="baseEdit">
+        <div class="field"><label>Title</label><input id="f_Title"></div>
+        <div class="field"><label>Author</label><input id="f_Author"></div>
+        <div class="field"><label>Genre</label><input id="f_Genre"></div>
+        <div class="field"><label>Year</label><input id="f_Year"></div>
+        <div class="field"><label>Publisher</label><input id="f_Publisher"></div>
+        <div class="field"><label>Rating</label><input id="f_PublicRating"></div>
+        <div class="field"><label>Rating Source</label><input id="f_PublicRatingSource"></div>
+        <div class="field"><label>Description</label><textarea id="f_Description"></textarea></div>
+      </div>
+      <div class="sectionDivider">Your notes</div>
+      <div class="field">
+        <label>My Rating</label>
+        <div class="starPicker" id="starPicker"></div>
+        <input type="hidden" id="f_MyRating" value="0">
+      </div>
+      <div class="field"><label>My Review</label><textarea id="f_MyReview" placeholder="What did you think?"></textarea></div>
+      <div class="field"><label>Comments</label><textarea id="f_Comments" placeholder="Any other notes…"></textarea></div>
+      <div class="toggleRow">
+        <span class="switch"><input type="checkbox" id="f_Read"><span class="switchTrack" onclick="document.getElementById('f_Read').click()"></span></span>
+        <span class="toggleText">Read</span>
+      </div>
+      <div class="toggleRow">
+        <span class="switch"><input type="checkbox" id="f_Loaned"><span class="switchTrack" onclick="document.getElementById('f_Loaned').click()"></span></span>
+        <span class="toggleText">Currently loaned out</span>
+      </div>
+      <div class="modalActions">
+        <button id="deleteBtn" onclick="deleteCurrent()" style="display:none;">Delete</button>
+        <button id="cancelBtn" onclick="closeModal()">Cancel</button>
+        <button id="saveBtn" onclick="saveBook()">Save</button>
+      </div>
+    </div>
+  </div>
+
+<script src="app.js"></script>
+</body>
+</html>
