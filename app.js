@@ -1,6 +1,6 @@
 // ====== CONFIGURE THESE TWO VALUES ======
 // The URL of your deployed Apps Script web app (ending in /exec).
-const API_URL = 'PASTE_YOUR_APPS_SCRIPT_WEB_APP_URL_HERE';
+const API_URL = 'https://script.google.com/macros/s/AKfycbxB3yCH-chu4GbjI0siZgiC5lgP9n3te2cDPRD474wcgk9zGBnINJFy70427h9VDC71/exec';
 // Must exactly match API_KEY in Code.gs.
 const API_KEY = 'alice-lib-8f2q4z-reading-2026';
 // =========================================
