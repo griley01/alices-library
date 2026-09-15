@@ -2,7 +2,7 @@
 // (in a "you're offline" sense) without a connection. It does NOT cache book data itself —
 // that always comes fresh from the API when online, since a stale cached library would be
 // more confusing than useful.
-const CACHE_NAME = 'alices-library-v2'; // bump this string any time index.html, manifest.json, or the icons change — it's what tells phones a new version exists
+const CACHE_NAME = 'alices-library-v3'; // bump this string any time index.html, manifest.json, or the icons change — it's what tells phones a new version exists
 const APP_SHELL = ['./', './index.html', './manifest.json', './icon-192.png', './icon-512.png'];
 
 self.addEventListener('install', function (event) {
