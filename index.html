@@ -52,6 +52,9 @@
     .filter-bar input[type="text"] { flex: 1; min-width: 160px; }
     .filter-bar select { max-width: 100%; }
     .filter-bar input:focus, .filter-bar select:focus { outline: none; border-color: var(--rose); }
+    #clearFiltersBtn { font-size: 13.5px; padding: 8px 12px; border-radius: 6px; border: 1px solid var(--border);
+              background: #fffbfc; color: var(--deep); cursor: pointer; font-family: inherit; white-space: nowrap; }
+    #clearFiltersBtn:hover { background: var(--blush); }
 
     .count-line { font-size: 12.5px; color: var(--ink-soft); margin-bottom: 1rem; }
 
@@ -89,10 +92,12 @@
 
     #addBtn { position: fixed; bottom: calc(22px + env(safe-area-inset-bottom)); right: 22px; width: 56px; height: 56px;
               border-radius: 50%; background: var(--deep); color: #fff; font-size: 1.8em; border: none;
-              box-shadow: 0 4px 14px rgba(94,29,60,0.4); cursor: pointer; line-height: 1; z-index: 5; }
-    #cameraBtn { position: fixed; bottom: calc(90px + env(safe-area-inset-bottom)); right: 22px; width: 48px; height: 48px;
-              border-radius: 50%; background: #fff; color: var(--deep); font-size: 1.3em; border: 1px solid var(--border);
-              box-shadow: 0 4px 14px rgba(94,29,60,0.25); cursor: pointer; line-height: 1; z-index: 5; }
+              box-shadow: 0 4px 14px rgba(94,29,60,0.4); cursor: pointer; line-height: 1; z-index: 5;
+              display: flex; align-items: center; justify-content: center; }
+    #cameraBtn { position: fixed; bottom: calc(22px + env(safe-area-inset-bottom)); right: 90px; width: 56px; height: 56px;
+              border-radius: 50%; background: var(--deep); color: #fff; border: none;
+              box-shadow: 0 4px 14px rgba(94,29,60,0.4); cursor: pointer; line-height: 1; z-index: 5;
+              display: flex; align-items: center; justify-content: center; }
 
     #modal { display: none; position: fixed; inset: 0; background: rgba(58,36,48,0.55);
              align-items: center; justify-content: center; padding: 16px; z-index: 10; }
@@ -163,13 +168,16 @@
         <option value="rating">Sort: Rating (high–low)</option>
         <option value="year">Sort: Year (new–old)</option>
       </select>
+      <button id="clearFiltersBtn" onclick="clearFilters()">Clear</button>
     </div>
     <div class="count-line" id="count">Loading…</div>
     <div class="grid" id="list"></div>
     <div id="empty" style="display:none;">No books match that search.</div>
   </div>
 
-  <button id="cameraBtn" onclick="openCameraCapture()" title="Add from photo">📷</button>
+  <button id="cameraBtn" onclick="openCameraCapture()" title="Add from photo">
+    <svg viewBox="0 0 24 24" width="26" height="26" fill="currentColor"><path d="M9 3l-1.5 2H4a2 2 0 0 0-2 2v11a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-3.5L15 3H9zm3 5a5 5 0 1 1 0 10 5 5 0 0 1 0-10zm0 2a3 3 0 1 0 0 6 3 3 0 0 0 0-6z"/></svg>
+  </button>
   <input type="file" accept="image/*" capture="environment" id="cameraInput" style="display:none" onchange="handlePhotoCapture(event)">
   <button id="addBtn" onclick="openAddModal()">+</button>
 
